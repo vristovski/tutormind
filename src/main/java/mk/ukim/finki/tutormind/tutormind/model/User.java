@@ -2,12 +2,18 @@ package mk.ukim.finki.tutormind.tutormind.model;
 
 import lombok.Data;
 import mk.ukim.finki.tutormind.tutormind.model.enumerations.Role;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
+import java.util.Collection;
+import java.util.Collections;
 
 @Data
-public class User {
+@Entity
+@Table(name = "users")
+public class User implements UserDetails {
+    @Id
     private String username;
 
     private String password;
@@ -15,6 +21,11 @@ public class User {
     private String name;
 
     private String surname;
+
+    private boolean isAccountNonExpired = true;
+    private boolean isAccountNonLocked = true;
+    private boolean isCredentialsNonExpired = true;
+    private boolean isEnabled = true;
 
     @Enumerated(value = EnumType.STRING)
     private Role role;
@@ -25,5 +36,33 @@ public class User {
         this.name = name;
         this.surname = surname;
         this.role = role;
+    }
+
+    public User() {
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(role);
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return isAccountNonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return isAccountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return isCredentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
     }
 }

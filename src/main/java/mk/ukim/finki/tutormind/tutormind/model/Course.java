@@ -1,19 +1,20 @@
 package mk.ukim.finki.tutormind.tutormind.model;
 
 import lombok.Data;
-import mk.ukim.finki.tutormind.tutormind.model.enumerations.Category;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 
 @Data
+@Entity
 public class Course {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
 
-    @Enumerated(value = EnumType.STRING)
+    @ManyToOne
     private Category category;
 
     private String description;
@@ -28,5 +29,8 @@ public class Course {
         this.description = description;
         this.price = price;
         this.length = length;
+    }
+
+    public Course() {
     }
 }
