@@ -2,6 +2,7 @@ package mk.ukim.finki.tutormind.tutormind.service.impl;
 
 import mk.ukim.finki.tutormind.tutormind.model.Category;
 import mk.ukim.finki.tutormind.tutormind.model.Course;
+import mk.ukim.finki.tutormind.tutormind.model.User;
 import mk.ukim.finki.tutormind.tutormind.model.exceptions.CategoryNotFoundException;
 import mk.ukim.finki.tutormind.tutormind.model.exceptions.CourseNotFoundException;
 import mk.ukim.finki.tutormind.tutormind.repository.CategoryRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -40,12 +42,12 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Optional<Course> save(String name, Long categoryId, String description, Double price, Double length) {
+    public Optional<Course> save(String name, Long categoryId, String description, Double price, Double length, User user) {
         Category category = this.categoryRepository.findById(categoryId).
                 orElseThrow(() -> new CategoryNotFoundException(categoryId));
 
     this.courseRepository.deleteByName(name);
-    Course course = new Course(name, category, description, price, length);
+    Course course = new Course(name, category, description, price, length,user);
     this.courseRepository.save(course);
     return Optional.of(course);
     }
@@ -68,5 +70,12 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public void deleteById(Long id) {
         this.courseRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Course> filterCoursesByUser(List<Course> courses, User user) {
+        return courses.stream()
+                .filter(course -> course.getUser().equals(user))
+                .collect(Collectors.toList());
     }
 }

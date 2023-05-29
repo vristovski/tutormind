@@ -7,10 +7,16 @@ import mk.ukim.finki.tutormind.tutormind.model.exceptions.PasswordsDoNotMatchExc
 import mk.ukim.finki.tutormind.tutormind.model.exceptions.UsernameAlreadyExistsException;
 import mk.ukim.finki.tutormind.tutormind.repository.UserRepository;
 import mk.ukim.finki.tutormind.tutormind.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.List;
+
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -22,6 +28,20 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // Find a way to get the current user -> Currently not working
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            String currentUserName = authentication.getName();
+            return userRepository.findByUsername(currentUserName)
+                    .orElseThrow(() -> new UsernameNotFoundException(currentUserName));
+        } else {
+            return getTutors().stream().findFirst()
+                    .orElseThrow(() -> new UsernameNotFoundException("test"));
+        }
+    }
+
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
@@ -39,6 +59,10 @@ public class UserServiceImpl implements UserService {
             throw new UsernameAlreadyExistsException(username);
         User user = new User(username,passwordEncoder.encode(password),name,surname,userRole);
         return userRepository.save(user);
+    }
+
+    public List<User> getTutors() {
+        return userRepository.findAllByRole(Role.ROLE_TEACHER);
     }
 }
 

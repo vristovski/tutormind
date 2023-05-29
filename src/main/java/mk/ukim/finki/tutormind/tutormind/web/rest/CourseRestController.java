@@ -1,7 +1,10 @@
 package mk.ukim.finki.tutormind.tutormind.web.rest;
 
 import mk.ukim.finki.tutormind.tutormind.model.Course;
+import mk.ukim.finki.tutormind.tutormind.model.User;
 import mk.ukim.finki.tutormind.tutormind.service.CourseService;
+import mk.ukim.finki.tutormind.tutormind.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +16,11 @@ import java.util.List;
 public class CourseRestController {
 
     private final CourseService courseService;
+    private final UserService userService;
 
-    public CourseRestController(CourseService courseService) {
+    public CourseRestController(CourseService courseService, UserService userService) {
         this.courseService = courseService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -36,7 +41,8 @@ public class CourseRestController {
                                        @RequestParam String description,
                                        @RequestParam Double price,
                                        @RequestParam Double length) {
-        return this.courseService.save(name, category, description, price, length)
+        User user = this.userService.getCurrentUser();
+        return this.courseService.save(name, category, description, price, length, user)
                 .map(product -> ResponseEntity.ok().body(product))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
@@ -58,5 +64,13 @@ public class CourseRestController {
         this.courseService.deleteById(id);
         if(this.courseService.findById(id).isEmpty()) return ResponseEntity.ok().build();
         return ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<Course>> findByUser() {
+        List<Course> courses = this.courseService.findAll();
+        User user = this.userService.getCurrentUser();
+        List<Course> filteredCourses = this.courseService.filterCoursesByUser(courses,user);
+        return ResponseEntity.ok(filteredCourses);
     }
 }

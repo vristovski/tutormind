@@ -8,6 +8,7 @@ import mk.ukim.finki.tutormind.tutormind.repository.UserRepository;
 import mk.ukim.finki.tutormind.tutormind.service.UserService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletRequest;
@@ -76,5 +77,10 @@ public class UserController {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @GetMapping("/tutors")
+    public List<User> getAllTutors() {
+        return userService.getTutors();
     }
 }
