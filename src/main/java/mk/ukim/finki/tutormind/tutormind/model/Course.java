@@ -23,12 +23,16 @@ public class Course {
 
     private Double length;
 
-    public Course(String name, Category category, String description, Double price, Double length) {
+    @ManyToOne
+    private User user;
+
+    public Course(String name, Category category, String description, Double price, Double length, User user) {
         this.name = name;
         this.category = category;
         this.description = description;
         this.price = price;
         this.length = length;
+        this.user = user;
     }
 
     public Course() {
