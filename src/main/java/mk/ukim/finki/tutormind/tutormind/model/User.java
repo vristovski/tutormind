@@ -22,6 +22,8 @@ public class User implements UserDetails {
 
     private String surname;
 
+    private String description;
+
     private boolean isAccountNonExpired = true;
     private boolean isAccountNonLocked = true;
     private boolean isCredentialsNonExpired = true;
