@@ -2,6 +2,7 @@ package mk.ukim.finki.tutormind.tutormind.service;
 
 import mk.ukim.finki.tutormind.tutormind.model.Category;
 import mk.ukim.finki.tutormind.tutormind.model.Course;
+import mk.ukim.finki.tutormind.tutormind.model.DTOs.UserDetailsDTO;
 import mk.ukim.finki.tutormind.tutormind.model.User;
 
 import java.util.List;

@@ -4,6 +4,7 @@ import mk.ukim.finki.tutormind.tutormind.config.security.JwtTokenProvider;
 import mk.ukim.finki.tutormind.tutormind.model.User;
 import mk.ukim.finki.tutormind.tutormind.model.DTOs.LoginUserDTO;
 import mk.ukim.finki.tutormind.tutormind.model.DTOs.RegisterUserDTO;
+import mk.ukim.finki.tutormind.tutormind.model.DTOs.UserDetailsDTO;
 import mk.ukim.finki.tutormind.tutormind.repository.UserRepository;
 import mk.ukim.finki.tutormind.tutormind.service.UserService;
 
@@ -48,7 +49,7 @@ public class UserController {
                 registerUserDTO.getSurname(), registerUserDTO.getRole());
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public Map<Object, Object> loginUser(@RequestBody LoginUserDTO loginUserDTO) {
 
         try {
@@ -77,6 +78,11 @@ public class UserController {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @GetMapping("/{username}")
+    public UserDetailsDTO getUserDetails(@PathVariable("username") String username) {
+        return userService.getUserDetails(username);
     }
 
     @GetMapping("/tutors")
