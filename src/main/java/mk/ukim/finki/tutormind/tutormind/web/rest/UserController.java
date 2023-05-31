@@ -4,6 +4,7 @@ import mk.ukim.finki.tutormind.tutormind.config.security.JwtTokenProvider;
 import mk.ukim.finki.tutormind.tutormind.model.User;
 import mk.ukim.finki.tutormind.tutormind.model.DTOs.LoginUserDTO;
 import mk.ukim.finki.tutormind.tutormind.model.DTOs.RegisterUserDTO;
+import mk.ukim.finki.tutormind.tutormind.model.DTOs.TutorDTO;
 import mk.ukim.finki.tutormind.tutormind.model.DTOs.UserDetailsDTO;
 import mk.ukim.finki.tutormind.tutormind.repository.UserRepository;
 import mk.ukim.finki.tutormind.tutormind.service.UserService;
@@ -11,6 +12,7 @@ import mk.ukim.finki.tutormind.tutormind.service.UserService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -60,9 +62,12 @@ public class UserController {
                     .orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found")).getRole()
                     .toString());
 
+            Optional<User> user = userRepository.findByUsername(username);
+
             Map<Object, Object> model = new HashMap<>();
             model.put("username", username);
             model.put("token", token);
+            model.put("role", user.get().getRole());
 
             return model;
         } catch (AuthenticationException e) {
@@ -86,7 +91,7 @@ public class UserController {
     }
 
     @GetMapping("/tutors")
-    public List<User> getAllTutors() {
-        return userService.getTutors();
+    public List<TutorDTO> getAllTutors() {
+        return userService.getTutorsWithCourses();
     }
 }
